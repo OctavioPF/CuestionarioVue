@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz de Vue.js</title>
+  <!-- Agrega la biblioteca Vue.js desde el CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <style>
+    @keyframes move_wave {
+    0% {
+        transform: translateX(0) translateZ(0) scaleY(1)
+    }
+    50% {
+        transform: translateX(-25%) translateZ(0) scaleY(0.55)
+    }
+    100% {
+        transform: translateX(-50%) translateZ(0) scaleY(1)
+    }
+}
+.waveWrapper {
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: auto;
+}
+.waveWrapperInner {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+    bottom: -1px;
+    background-image: linear-gradient(to top, #37866e 20%, #206732 80%);
+}
+.bgTop {
+    z-index: 15;
+    opacity: 0.5;
+}
+.bgMiddle {
+    z-index: 10;
+    opacity: 0.75;
+}
+.bgBottom {
+    z-index: 5;
+}
+.wave {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat no-repeat;
+    background-position: 0 bottom;
+    transform-origin: center bottom;
+}
+.waveTop {
+    background-size: 50% 100px;
+}
+.waveAnimation .waveTop {
+  animation: move-wave 3s;
+   -webkit-animation: move-wave 3s;
+   -webkit-animation-delay: 1s;
+   animation-delay: 1s;
+}
+.waveMiddle {
+    background-size: 50% 120px;
+}
+.waveAnimation .waveMiddle {
+    animation: move_wave 10s linear infinite;
+}
+.waveBottom {
+    background-size: 50% 100px;
+}
+.waveAnimation .waveBottom {
+    animation: move_wave 15s linear infinite;
+}
+    #app {
+      display: flex;
+      font-family: 'Avenir', Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-align: center;
+      margin-top: 9%;
+      align-items: center;
+      margin-left: -50%;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .question {
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      color: white;
+    }
+    .respuestas{
+      display: flex;
+    margin: 14px;
+
+    }
+    .descripcion{
+      display: flex;
+    margin: 14px;
+
+    }
+    .neon-text {
+      color: white;
+      text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #00ff00,
+        0 0 30px #00ff00,
+        0 0 40px #00ff00,
+        0 0 50px #00ff00,
+        0 0 60px #00ff00,
+        0 0 70px #00ff00;
+    }
+    button.btn-sig {
+    border-radius: 8px;
+    height: 46px;
+    width: 120px;
+    font-size: 20px;
+}
+  </style>
+</head>
+<body>
+
+  <div class="waveWrapper waveAnimation">
+    <div class="waveWrapperInner bgTop">
+      <div class="wave waveTop" style="background-image: url('http://front-end-noobs.com/jecko/img/wave-top.png')">
+        
+        <div id="app">
+          <h1 class="neon-text">Quiz de Vue.js</h1>
+          <h3 class="descripcion neon-text">Formulario usando vue.js </h3>
+
+          <div v-if="!showResults && currentQuestionIndex < questions.length">
+            <div class="question">
+              <h3>{{ currentQuestion.text }}</h3>
+              <div class="respuestas" v-for="(answer, i) in currentQuestion.answers" :key="i">
+                <input type="radio" :name="'question-' + currentQuestionIndex" :value="i" v-model="userAnswers[currentQuestionIndex]" />
+                <label>{{ answer }}</label>
+              </div>
+            </div>
+            <button class="btn-sig" @click="nextQuestion">Siguiente</button>
+          </div>
+          <div v-if="showResults">
+            <h2>Resultados</h2>
+            <p>Correctas: {{ correctAnswersCount }} de {{ questions.length }}</p>
+            <button @click="restartQuiz">Reiniciar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="waveWrapperInner bgMiddle">
+      <div class="wave waveMiddle" style="background-image: url('http://front-end-noobs.com/jecko/img/wave-mid.png')"></div>
+    </div>
+    <div class="waveWrapperInner bgBottom">
+      <div class="wave waveBottom" style="background-image: url('http://front-end-noobs.com/jecko/img/wave-bot.png')"></div>
+    </div>
+  </div>
+
+
+
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        questions: [
+          {
+            text: "¿Qué es Vue.js?",
+            answers: [
+              "Un framework backend",
+              "Una biblioteca frontend",
+              "Un lenguaje de programación",
+              "Una base de datos"
+            ],
+            correctAnswer: 1
+          },
+          {
+            text: "¿Quién desarrolló Vue.js?",
+            answers: [
+              "Evan You",
+              "Jordan Walke",
+              "Brendan Eich",
+              "John Resig"
+            ],
+            correctAnswer: 0
+          },
+          {
+            text: "¿Cuál es la última versión de Vue.js?",
+            answers: [
+              "Vue 2",
+              "Vue 3",
+              "Vue 4",
+              "Vue 5"
+            ],
+            correctAnswer: 1
+          },
+          {
+            text: "¿Qué directiva se utiliza para iterar sobre una lista en Vue?",
+            answers: [
+              "v-bind",
+              "v-if",
+              "v-for",
+              "v-show"
+            ],
+            correctAnswer: 2
+          },
+          {
+            text: "¿Cómo se enlazan los datos en Vue.js?",
+            answers: [
+              "Con v-if",
+              "Con v-for",
+              "Con v-bind",
+              "Con v-show"
+            ],
+            correctAnswer: 2
+          }
+        ],
+        currentQuestionIndex: 0,
+        userAnswers: Array(5).fill(null),
+        showResults: false
+      },
+      computed: {
+        currentQuestion() {
+          return this.questions[this.currentQuestionIndex];
+        },
+        correctAnswersCount() {
+          return this.userAnswers.reduce((count, answer, index) => {
+            return count + (answer === this.questions[index].correctAnswer ? 1 : 0);
+          }, 0);
+        }
+      },
+      methods: {
+        nextQuestion() {
+          if (this.userAnswers[this.currentQuestionIndex] !== null) {
+            this.currentQuestionIndex++;
+            if (this.currentQuestionIndex >= this.questions.length) {
+              this.showResults = true;
+            }
+          } else {
+            alert("Por favor selecciona una respuesta antes de continuar.");
+          }
+        },
+        restartQuiz() {
+          this.currentQuestionIndex = 0;
+          this.userAnswers = Array(this.questions.length).fill(null);
+          this.showResults = false;
+        }
+      }
+    });
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
